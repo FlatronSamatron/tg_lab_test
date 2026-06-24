@@ -5,8 +5,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, func
 
 from app.db import Base
-from app.models.expedition import ExpeditionOrm
-from app.models.user import UserOrm
 
 class StateEnum(str, enum.Enum):
     invited = "invited"

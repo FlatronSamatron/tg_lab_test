@@ -1,8 +1,6 @@
 import enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db import Base, TimestampMixin
-from app.models.expedition import ExpeditionOrm
-from app.models.expedition_member import ExpeditionMemberOrm
 
 class RoleEnum(str, enum.Enum):
     chief = "chief"

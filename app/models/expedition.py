@@ -5,8 +5,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, TimestampMixin
-from app.models.expedition_member import ExpeditionMemberOrm
-from app.models.user import UserOrm
 
 class StatusEnum(str, enum.Enum):
     draft = "draft"
