@@ -13,6 +13,7 @@ class UserOrm(Base, TimestampMixin):
     email: Mapped[str] = mapped_column(unique=True)
     name: Mapped[str]
     role: Mapped[RoleEnum] = mapped_column(default=RoleEnum.member)
+    hashed_password: Mapped[str]
 
     expeditions: Mapped[list["ExpeditionOrm"]] = relationship(back_populates="chief")
     participations: Mapped[list["ExpeditionMemberOrm"]] = relationship(back_populates="user")
