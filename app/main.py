@@ -2,20 +2,21 @@ from sqlalchemy.exc import IntegrityError
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from app.models import expedition, expedition_member
+from app.models import expedition_member
 
 
 from app.api.auth import router as auth_router
+from app.api.expeditions import router as epedition_router
 
 app = FastAPI()
 
 
-@app.exception_handler(IntegrityError)
-async def error_handler(request: Request, exc: IntegrityError):
-    return JSONResponse(
-        status_code=400,
-        content={"detail": "Something went wrong"}
-    )
+# @app.exception_handler(IntegrityError)
+# async def error_handler(request: Request, exc: IntegrityError):
+#     return JSONResponse(
+#         status_code=400,
+#         content={"detail": "Something went wrong"}
+#     )
 
 
 @app.get("/health")
@@ -26,3 +27,4 @@ async def get_health():
 
 
 app.include_router(auth_router)
+app.include_router(epedition_router)

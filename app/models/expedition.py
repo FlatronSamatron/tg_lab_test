@@ -26,5 +26,5 @@ class ExpeditionOrm(Base, TimestampMixin):
     capacity: Mapped[int]
     chief_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
-    chief: Mapped["UserOrm"] = relationship(back_populates="expeditions")
+    chief: Mapped["UserOrm"] = relationship(back_populates="expeditions", lazy="selectin")
     members: Mapped[list["ExpeditionMemberOrm"]] = relationship(back_populates="expedition")
