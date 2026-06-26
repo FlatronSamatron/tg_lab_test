@@ -9,6 +9,8 @@ from app.models.expedition_member import ExpeditionMemberOrm, StateEnum
 from app.models.user import RoleEnum, UserOrm
 from app.schemas.expedition import ExpeditionCreate, ExpeditionResponse
 from app.schemas.expedition_member import MemberInvite, MemberResponse
+from app.services.websocket import manager
+
 
 router = APIRouter(tags=["EXPEDITIONS"], prefix="/expeditions")
 
@@ -117,6 +119,8 @@ async def edit_expedition_status(new_status: StatusEnum, id: int, session: Sessi
     await session.commit()
     await session.refresh(exp)
 
+    await manager.broadcast({"event": "expedition_status", "status": new_status.value}, id)
+
     return exp
 
 """
@@ -165,6 +169,8 @@ async def add_member_to_exp(id: int, member: MemberInvite, session: SessionDep, 
     await session.commit()
     await session.refresh(new_member_exp)
 
+    await manager.broadcast({"event": "member_invited", "user_id": user.id}, id)
+
     return new_member_exp
 
 
@@ -191,6 +197,8 @@ async def confirm_exp(id: int, user_id: UserIdDep, session: SessionDep):
     user_exp.state = StateEnum.confirmed
 
     await session.commit()
+
+    await manager.broadcast({"event": "member_confirmed", "user_id": user_id}, id)
 
     return {
         "status": "Your expedition was confirmed"

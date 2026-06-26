@@ -1,12 +1,12 @@
 from sqlalchemy.exc import IntegrityError
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from app.models import expedition_member
+from fastapi.responses import HTMLResponse, JSONResponse
 
 
 from app.api.auth import router as auth_router
 from app.api.expeditions import router as epedition_router
+from app.api.ws import router as ws_router
 
 app = FastAPI()
 
@@ -25,6 +25,12 @@ async def get_health():
         "status": "OK"
     }
 
+@app.get("/ws_test")
+async def open_ws_tester():
+    with open("test/ws.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
 
 app.include_router(auth_router)
 app.include_router(epedition_router)
+app.include_router(ws_router)
