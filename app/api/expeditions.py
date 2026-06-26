@@ -80,7 +80,7 @@ async def edit_expedition_status(new_status: StatusEnum, id: int, session: Sessi
         raise HTTPException(status_code=400, detail=f"Cannot change status from {exp.status} to {new_status}")
 
     if new_status == StatusEnum.active:
-        if exp.start_at <= datetime.now():
+        if exp.start_at > datetime.now():
             raise HTTPException(status_code=403, detail="date must be before start expedition")
         
         count_query = await session.execute(select(func.count(ExpeditionMemberOrm.id)).where(
@@ -93,7 +93,7 @@ async def edit_expedition_status(new_status: StatusEnum, id: int, session: Sessi
         if confirmed_cnt < 2:
             raise HTTPException(400, "Confirmed members must be greater or equal 2")
 
-        if confirmed_cnt < exp.capacity:
+        if confirmed_cnt > exp.capacity:
             raise HTTPException(400, "Not enough confirmed members to get ready")
         
         current_members_subquery = select(ExpeditionMemberOrm.user_id).where(
@@ -195,6 +195,7 @@ async def confirm_exp(id: int, user_id: UserIdDep, session: SessionDep):
         raise HTTPException(status_code=404, detail="Your expedition was confirmed")
     
     user_exp.state = StateEnum.confirmed
+    user_exp.confirmed_at = datetime.now()
 
     await session.commit()
 

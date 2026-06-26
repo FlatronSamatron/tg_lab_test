@@ -11,12 +11,12 @@ from app.api.ws import router as ws_router
 app = FastAPI()
 
 
-# @app.exception_handler(IntegrityError)
-# async def error_handler(request: Request, exc: IntegrityError):
-#     return JSONResponse(
-#         status_code=400,
-#         content={"detail": "Something went wrong"}
-#     )
+@app.exception_handler(IntegrityError)
+async def error_handler(request: Request, exc: IntegrityError):
+    return JSONResponse(
+        status_code=400,
+        content={"detail": "Something went wrong"}
+    )
 
 
 @app.get("/health")
