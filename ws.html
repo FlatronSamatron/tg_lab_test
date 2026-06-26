@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Tester</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #messages { border: 1px solid black; height: 400px; padding: 10px; overflow-y: auto; margin-top: 10px; font-family: monospace; }
+        .msg { border-bottom: 1px solid #ccc; padding: 5px 0; }
+        input, button { padding: 5px; margin-right: 5px; border: 1px solid black; }
+    </style>
+</head>
+<body>
+    <h2>WebSocket Tester</h2>
+    <div>
+        <label>Expedition ID:</label>
+        <input type="number" id="expId" value="1" min="1">
+        <button onclick="connectWS()">Connect</button>
+    </div>
+    <div id="messages"></div>
+
+    <script>
+        let ws = null;
+
+        function log(message) {
+            const div = document.getElementById('messages');
+            const time = new Date().toLocaleTimeString();
+            div.innerHTML += `<div class="msg">[${time}] ${message}</div>`;
+            div.scrollTop = div.scrollHeight;
+        }
+
+        function connectWS() {
+            if (ws) ws.close();
+            
+            const expId = document.getElementById('expId').value;
+            log(`Connecting to Expedition #${expId}...`);
+            
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/expeditions/${expId}`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => log('Connected successfully. Waiting for events...');
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    log(`RECEIVED: ${JSON.stringify(data)}`);
+                } catch (e) {
+                    log(`RECEIVED: ${event.data}`);
+                }
+            };
+            
+            ws.onclose = (event) => log(`Disconnected (Code: ${event.code})`);
+            ws.onerror = () => log('Connection error.');
+        }
+    </script>
+</body>
+</html>

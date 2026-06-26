@@ -15,7 +15,7 @@ app = FastAPI()
 async def error_handler(request: Request, exc: IntegrityError):
     return JSONResponse(
         status_code=400,
-        content={"detail": "Something went wrong"}
+        content={"detail": str(exc.orig)}
     )
 
 
@@ -27,7 +27,7 @@ async def get_health():
 
 @app.get("/ws_test")
 async def open_ws_tester():
-    with open("test/ws.html", "r", encoding="utf-8") as f:
+    with open("ws.html", "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
 
